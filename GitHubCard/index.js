@@ -3,6 +3,7 @@
            https://api.github.com/users/<your name>
 */
 
+
 /* Step 2: Inspect and study the data coming back, this is YOUR 
    github info! You will need to understand the structure of this 
    data in order to use it to build your component function 
@@ -53,3 +54,67 @@ const followersArray = [];
   luishrd
   bigknell
 */
+
+function gitHubUserCard(info){
+  const 
+    gitHubCard = document.createElement("div"),
+    gitHubUserImage = document.createElement("img"),
+      gitHubCardInfo = document.createElement("div"),
+      name = document.createElement("h3"),
+      userName = document.createElement("p"),
+      userLocation = document.createElement("p"),
+      userProfile = document.createElement("p"),
+        userLink = document.createElement("a"),
+      followers = document.createElement("p"),
+      following = document.createElement("p"),
+      bio = document.createElement("p");
+  
+  gitHubCard.classList.add("card");
+  gitHubCardInfo.classList.add("card-info");
+  name.classList.add("name");
+  userName.classList.add("username");
+
+  gitHubUserImage.src = info.avatar_url;
+  name.textContent = info.name;
+  userName.textContent = info.login;
+  userLocation.textContent = `Location: ${info.location}`;
+  userProfile.textContent = "Profile:";
+    userLink.href = info.html_url;
+    userLink.textContent = info.html_url;
+  followers.textContent = `Followers: ${info.followers}`;
+  following.textContent = `Following: ${info.following}`;
+  bio.textContent = `Bio: ${info.bio}`;
+
+  gitHubCard.appendChild(gitHubUserImage);
+  gitHubCard.appendChild(gitHubCardInfo);
+    gitHubCardInfo.appendChild(name);
+    gitHubCardInfo.appendChild(userName);
+    gitHubCardInfo.appendChild(userLocation);
+    gitHubCardInfo.appendChild(userProfile);
+      userProfile.appendChild(userLink);
+    gitHubCardInfo.appendChild(followers);
+    gitHubCardInfo.appendChild(following);
+    gitHubCardInfo.appendChild(bio);
+
+  return gitHubCard;
+}
+
+const cards = document.querySelector(".cards");
+
+
+axios.get("https://api.github.com/users/perezsergioace")
+.then((response) => {
+  console.log(response);
+  cards.appendChild(gitHubUserCard(response.data));
+})
+
+axios.get("https://api.github.com/users/perezsergioace/followers")
+.then((response) => {
+  response.data.forEach((element) => {
+    const newUserCard = new gitHubUserCard(element);
+    cards.appendChild(newUserCard)
+  });
+})
+.catch((error) => {
+  console.log("Data was not returned", error)
+})
