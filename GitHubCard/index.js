@@ -55,6 +55,31 @@ const followersArray = [];
   bigknell
 */
 
+axios.get("https://api.github.com/users/perezsergioace")
+.then((response) => {
+  console.log(response);
+  cards.appendChild(gitHubUserCard(response.data));
+})
+
+
+
+
+axios.get("https://api.github.com/users/perezsergioace/followers")
+.then((response) => {
+  response.data.forEach((element) => {
+    axios.get(`https://api.github.com/users/${element.login}`)
+    .then(response => {
+      cards.appendChild(gitHubUserCard(response.data))
+    })
+    .catch(error => {
+      console.log(error);
+    })
+  });
+})
+.catch((error) => {
+  console.log("Data was not returned", error)
+})
+
 function gitHubUserCard(info){
   const 
     gitHubCard = document.createElement("div"),
@@ -78,7 +103,7 @@ function gitHubUserCard(info){
   name.textContent = info.name;
   userName.textContent = info.login;
   userLocation.textContent = `Location: ${info.location}`;
-  userProfile.textContent = "Profile:";
+  userProfile.textContent = "Profile: ";
     userLink.href = info.html_url;
     userLink.textContent = info.html_url;
   followers.textContent = `Followers: ${info.followers}`;
@@ -101,20 +126,3 @@ function gitHubUserCard(info){
 
 const cards = document.querySelector(".cards");
 
-
-axios.get("https://api.github.com/users/perezsergioace")
-.then((response) => {
-  console.log(response);
-  cards.appendChild(gitHubUserCard(response.data));
-})
-
-axios.get("https://api.github.com/users/perezsergioace/followers")
-.then((response) => {
-  response.data.forEach((element) => {
-    const newUserCard = new gitHubUserCard(element);
-    cards.appendChild(newUserCard)
-  });
-})
-.catch((error) => {
-  console.log("Data was not returned", error)
-})
